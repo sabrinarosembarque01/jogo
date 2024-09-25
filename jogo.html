@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Adivinhação de Nomes</title>
+</head>
+<body>
+    <h1>Jogo da Sabrina de Adivinhação de Nomes</h1>
+    <p>Escolha o modo de jogo:</p>
+    <button id="easyMode">Fácil</button>
+    <button id="hardMode">Difícil</button>
+    
+    <div id="gameArea" style="display: none;">
+        <p>adivinhe o nome!</p>
+        <input type="text" id="guessInput" placeholder="Digite seu palpite">
+        <button id="submitGuess">Enviar</button>
+        <p id="result"></p>
+        <p id="remainingAttempts" style="display: none;"></p>
+    </div>
+
+    <script>
+        // Classe do jogo
+        class GuessingGame {
+            constructor() {
+                this.secretName = "Sabrina";
+                this.attempts = 0;
+                this.maxAttempts = null;
+            }
+
+            checkGuess(guess) {
+                this.attempts++;
+                if (guess.toLowerCase() === this.secretName.toLowerCase()) {
+                    return "Parabéns! Você acertou o nome em " + this.attempts + " tentativas!";
+                } else {
+                    return "Tente novamente!";
+                }
+            }
+
+            isGameOver() {
+                if (this.maxAttempts !== null && this.attempts >= this.maxAttempts) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        // Variáveis globais
+        let game;
+        let hardMode = false;
+
+        // Função para iniciar o jogo
+        function startGame(mode) {
+            game = new GuessingGame();
+            hardMode = (mode === 'hard');
+            document.getElementById("gameArea").style.display = 'block';
+            document.getElementById("remainingAttempts").style.display = hardMode ? 'block' : 'none';
+
+            if (hardMode) {
+                game.maxAttempts = 5; // Definindo tentativas para o modo difícil
+                document.getElementById("remainingAttempts").textContent = "Tentativas restantes: " + (game.maxAttempts - game.attempts);
+            }
+        }
+
+        // Função para processar o palpite do jogador
+        function submitGuess() {
+            const guess = document.getElementById("guessInput").value;
+            const result = game.checkGuess(guess);
+
+            document.getElementById("result").textContent = result;
+
+            if (hardMode) {
+                document.getElementById("remainingAttempts").textContent = "Tentativas restantes: " + (game.maxAttempts - game.attempts);
+                if (game.isGameOver()) {
+                    document.getElementById("result").textContent += " Você perdeu! O nome era " + game.secretName;
+                }
+            }
+        }
+
+        // Event Listeners
+        document.getElementById("easyMode").addEventListener("click", () => startGame('easy'));
+        document.getElementById("hardMode").addEventListener("click", () => startGame('hard'));
+        document.getElementById("submitGuess").addEventListener("click", submitGuess);
+    </script>
+</body>
+</html>
